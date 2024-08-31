@@ -34,7 +34,12 @@
                 return nil, status.Errorf(codes.InvalidArgument, "page token is invalid")
             }
         {{- else if .G.EntType.ID.IsString }}
-            pageToken := string(bytes)
+            {{- if .G.EntType.ID.HasGoType }}
+                {{- $idField := .G.FieldMap.ID -}}
+                {{- template "field_to_ent" dict "Field" $idField "VarName" "pageToken" "Ident" (print "string(bytes)") }}
+            {{- else }}
+                pageToken := string(bytes)
+            {{- end }}
         {{- end }}
         listQuery = listQuery.
             Where({{ qualify (print (unquote .G.EntPackage.String) "/" .G.EntType.Package) "IDLTE" }}(pageToken))
