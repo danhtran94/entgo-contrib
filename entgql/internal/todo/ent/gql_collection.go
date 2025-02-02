@@ -1123,6 +1123,11 @@ func (t *TodoQuery) collectField(ctx context.Context, oneNode bool, opCtx *graph
 				selectedFields = append(selectedFields, todo.FieldCustomp)
 				fieldSeen[todo.FieldCustomp] = struct{}{}
 			}
+		case "value":
+			if _, ok := fieldSeen[todo.FieldValue]; !ok {
+				selectedFields = append(selectedFields, todo.FieldValue)
+				fieldSeen[todo.FieldValue] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:
@@ -1663,7 +1668,7 @@ func fieldArgs(ctx context.Context, whereInput any, path ...string) map[string]a
 func unmarshalArgs(ctx context.Context, whereInput any, args map[string]any) map[string]any {
 	for _, k := range []string{firstField, lastField} {
 		v, ok := args[k]
-		if !ok {
+		if !ok || v == nil {
 			continue
 		}
 		i, err := graphql.UnmarshalInt(v)
